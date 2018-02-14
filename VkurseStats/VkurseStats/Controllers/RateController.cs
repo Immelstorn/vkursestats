@@ -18,8 +18,29 @@ namespace VkurseStats.Controllers
         {
             using (var db = new DataContext())
             {
-                var last = db.VkurseRates.OrderByDescending(r => r.Timestamp).Take(2).ToList();
-                if (!last.Any() || last.First().Timestamp.AddMinutes(30) <= DateTime.UtcNow)
+                var yesterdayStart = DateTime.UtcNow.Date.AddDays(-1);
+                var yesterdayFinish = DateTime.UtcNow.Date.AddSeconds(-1);
+                var yesterdayValues = db.VkurseRates
+                    .Where(r => r.Timestamp > yesterdayStart && r.Timestamp < yesterdayFinish)
+                    .OrderByDescending(r=>r.Timestamp)
+                    .ToList();
+
+                var yesterdayValue = yesterdayValues.Last();
+                for (var i = 0; i < yesterdayValues.Count - 1; i++)
+                {
+                    if (yesterdayValues[i].UsdBuy == yesterdayValues[i + 1].UsdBuy &&
+                        yesterdayValues[i].UsdSell == yesterdayValues[i + 1].UsdSell &&
+                        yesterdayValues[i].EurBuy == yesterdayValues[i + 1].EurBuy &&
+                        yesterdayValues[i].EurSell == yesterdayValues[i + 1].EurSell)
+                    {
+                        continue;
+                    }
+                    yesterdayValue = yesterdayValues[i];
+                    break;
+                }
+
+                var lastToday = db.VkurseRates.OrderByDescending(r => r.Timestamp).First();
+                if (lastToday.Timestamp.AddMinutes(30) <= DateTime.UtcNow)
                 {
                     var client = new RestClient(Uri);
                     var request = new RestRequest();
@@ -34,24 +55,22 @@ namespace VkurseStats.Controllers
                     };
                     db.VkurseRates.Add(newRate);
                     db.SaveChanges();
-                    last.Add(newRate);
-                    last = last.OrderByDescending(r => r.Timestamp).ToList();
+                    lastToday = newRate;
                 }
 
                 var result = new ReturnDto {
                     Eur = new RateDto {
-                        Buy = last[0].EurBuy,
-                        ChangePercentBuy = last.Count == 2 ? Math.Round((last[0].EurBuy / last[1].EurBuy - 1) * 100, 2) : 0,
-                        Sell = last[0].EurSell,
-                        ChangePercentSell = last.Count == 2 ? Math.Round((last[0].EurSell / last[1].EurSell - 1) * 100, 2) : 0,
+                        Buy = lastToday.EurBuy,
+                        ChangePercentBuy = Math.Round((lastToday.EurBuy / yesterdayValue.EurBuy - 1) * 100, 2),
+                        Sell = lastToday.EurSell,
+                        ChangePercentSell = Math.Round((lastToday.EurSell / yesterdayValue.EurSell - 1) * 100, 2)
                     },
                     Usd = new RateDto {
-                        Buy = last[0].UsdBuy,
-                        ChangePercentBuy = last.Count == 2 ? Math.Round((last[0].UsdBuy / last[1].UsdBuy - 1) * 100, 2) : 0,
+                        Buy = lastToday.UsdBuy,
+                        ChangePercentBuy = Math.Round((lastToday.UsdBuy / yesterdayValue.UsdBuy - 1) * 100, 2),
 
-                        Sell = last[0].UsdSell,
-                        ChangePercentSell = last.Count == 2 ? Math.Round((last[0].UsdSell / last[1].UsdSell - 1) * 100, 2) : 0,
-
+                        Sell = lastToday.UsdSell,
+                        ChangePercentSell = Math.Round((lastToday.UsdSell / yesterdayValue.UsdSell - 1) * 100, 2),
                     }
                 };
 
