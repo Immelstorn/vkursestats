@@ -48,10 +48,10 @@ namespace VkurseStats.Controllers
                     var content = response.Data;
 
                     var newRate = new VkurseRate {
-                        UsdBuy = Convert.ToDouble(content.Dollar.Buy, CultureInfo.InvariantCulture),
-                        UsdSell = Convert.ToDouble(content.Dollar.Sale, CultureInfo.InvariantCulture),
-                        EurBuy = Convert.ToDouble(content.Euro.Buy, CultureInfo.InvariantCulture),
-                        EurSell = Convert.ToDouble(content.Euro.Sale, CultureInfo.InvariantCulture),
+                        UsdBuy = Convert.ToDouble(content.Dollar.Buy.Replace(',','.'), CultureInfo.InvariantCulture),
+                        UsdSell = Convert.ToDouble(content.Dollar.Sale.Replace(',', '.'), CultureInfo.InvariantCulture),
+                        EurBuy = Convert.ToDouble(content.Euro.Buy.Replace(',', '.'), CultureInfo.InvariantCulture),
+                        EurSell = Convert.ToDouble(content.Euro.Sale.Replace(',', '.'), CultureInfo.InvariantCulture),
                     };
                     db.VkurseRates.Add(newRate);
                     db.SaveChanges();
