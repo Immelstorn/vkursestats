@@ -1,0 +1,91 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/Scripts/Chart.min.js"></script>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <title>Graph</title>
+</head>
+<body>
+    <canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas>
+<canvas id="chartEur" style="width: 1500px;  height: 300px"></canvas>
+<script>
+    var usdCtx = document.getElementById("chartUsd").getContext('2d');
+    var eurCtx = document.getElementById("chartEur").getContext('2d');
+
+    $.ajax({
+        method: 'POST',
+        url: '/api/rate/GetGraph'
+    }).done(function (result) {
+        var chartUsd = new Chart(usdCtx,
+            {
+                type: 'line',
+                data: {
+                    labels: result.map(function (x) { return x.Timestamp; }),
+                    datasets: [
+                        {
+                            label: 'Usd Buy',
+                            data: result.map(function (x) { return x.UsdBuy; }),
+                            fill: false,
+                            borderColor: [
+                                'rgba(153, 102, 255, 1)',
+                            ],
+                            borderWidth: 1,
+                            radius: 0,
+
+                        },
+                        {
+                            label: 'Usd Sell',
+                            data: result.map(function (x) { return x.UsdSell; }),
+                            fill: false,
+                            borderColor: [
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1,
+                            radius: 0,
+
+                        }
+                    ]
+                },
+                options: {
+                    responsive: false
+                }
+            });
+
+        var chartEur = new Chart(eurCtx,
+            {
+                type: 'line',
+                data: {
+                    labels: result.map(function (x) { return x.Timestamp; }),
+                    datasets: [
+                        {
+                            label: 'Eur Buy',
+                            data: result.map(function (x) { return x.EurBuy; }),
+                            fill: false,
+                            borderColor: [
+                                'rgba(153, 102, 255, 1)',
+                            ],
+                            borderWidth: 1,
+                            radius: 0
+                        },
+                        {
+                            label: 'Eur Sell',
+                            data: result.map(function (x) { return x.EurSell; }),
+                            fill: false,
+                            borderColor: [
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1,
+                            radius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: false
+                }
+            });
+    });
+</script>
+</body>
+</html>

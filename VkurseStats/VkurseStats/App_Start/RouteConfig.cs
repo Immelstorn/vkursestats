@@ -16,7 +16,7 @@ namespace VkurseStats
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Graph", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

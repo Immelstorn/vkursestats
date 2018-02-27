@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Results;
 
 using RestSharp;
 
@@ -13,6 +15,17 @@ namespace VkurseStats.Controllers
     public class RateController : ApiController
     {
         private const string Uri = "http://vkurse.dp.ua/course.json";
+
+        [HttpPost]
+        public JsonResult<List<VkurseRate>> GetGraph()
+        {
+            using (var db = new DataContext())
+            {
+                var monthAgo = DateTime.UtcNow.AddMonths(-1);
+                var records = db.VkurseRates.Where(r => r.Timestamp > monthAgo).ToList();
+                return Json(records);
+            }
+        }
 
         public IHttpActionResult Get()
         {
