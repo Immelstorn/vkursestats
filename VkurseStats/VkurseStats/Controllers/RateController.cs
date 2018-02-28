@@ -60,11 +60,28 @@ namespace VkurseStats.Controllers
                     var response = client.Execute<VkurseDto>(request);
                     var content = response.Data;
 
+                    if (!double.TryParse(content.Dollar.Buy.Replace(',', '.'), out var usdbuy))
+                    {
+                        usdbuy = lastToday.UsdBuy;
+                    }
+                    if (!double.TryParse(content.Dollar.Sale.Replace(',', '.'), out var usdsell))
+                    {
+                        usdsell = lastToday.UsdSell;
+                    }
+                    if (!double.TryParse(content.Euro.Buy.Replace(',', '.'), out var eurbuy))
+                    {
+                        eurbuy = lastToday.EurBuy;
+                    }
+                    if (!double.TryParse(content.Euro.Sale.Replace(',', '.'), out var eursell))
+                    {
+                        eursell = lastToday.EurSell;
+                    }
+
                     var newRate = new VkurseRate {
-                        UsdBuy = Convert.ToDouble(content.Dollar.Buy.Replace(',','.'), CultureInfo.InvariantCulture),
-                        UsdSell = Convert.ToDouble(content.Dollar.Sale.Replace(',', '.'), CultureInfo.InvariantCulture),
-                        EurBuy = Convert.ToDouble(content.Euro.Buy.Replace(',', '.'), CultureInfo.InvariantCulture),
-                        EurSell = Convert.ToDouble(content.Euro.Sale.Replace(',', '.'), CultureInfo.InvariantCulture),
+                        UsdBuy = usdbuy,
+                        UsdSell = usdsell,
+                        EurBuy = eurbuy,
+                        EurSell = eursell,
                     };
                     db.VkurseRates.Add(newRate);
                     db.SaveChanges();
