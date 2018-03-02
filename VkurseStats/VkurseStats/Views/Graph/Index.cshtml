@@ -1,4 +1,6 @@
-﻿@inherits System.Web.Mvc.WebViewPage
+﻿@using System.Web.Mvc
+@using System.Web.Mvc.Html
+@inherits System.Web.Mvc.WebViewPage
 <!DOCTYPE html>
 
 <html>
@@ -8,84 +10,116 @@
     <title>Graph</title>
 </head>
 <body>
-    <canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas>
-<canvas id="chartEur" style="width: 1500px;  height: 300px"></canvas>
+<div>
+    @Html.DropDownList("Period",new List<System.Web.Mvc.SelectListItem> {
+        new System.Web.Mvc.SelectListItem{Text = "Month", Value = "month", Selected = true},
+        new System.Web.Mvc.SelectListItem{Text = "Week", Value = "week"},
+        new System.Web.Mvc.SelectListItem{Text = "Day", Value = "day"},
+    }, new {onchange="changePeriod();"})
+
+</div>
+<canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas>
+<canvas id="chartEur" style="width: 1500px; height: 300px"></canvas>
 <script>
-    var usdCtx = document.getElementById("chartUsd").getContext('2d');
-    var eurCtx = document.getElementById("chartEur").getContext('2d');
+    var changePeriod = function() {
+        loadData($('#Period').val());
+    };
 
-    $.ajax({
-        method: 'POST',
-        url: '/api/rate/GetGraph'
-    }).done(function (result) {
-        var chartUsd = new Chart(usdCtx,
-            {
-                type: 'line',
-                data: {
-                    labels: result.map(function (x) { return x.Timestamp; }),
-                    datasets: [
-                        {
-                            label: 'Usd Buy',
-                            data: result.map(function (x) { return x.UsdBuy; }),
-                            fill: false,
-                            borderColor: [
-                                'rgba(153, 102, 255, 1)',
-                            ],
-                            borderWidth: 1,
-                            radius: 0,
+    var loadData = function(period) {
+        var usdCtx = document.getElementById("chartUsd").getContext('2d');
+        var eurCtx = document.getElementById("chartEur").getContext('2d');
 
-                        },
-                        {
-                            label: 'Usd Sell',
-                            data: result.map(function (x) { return x.UsdSell; }),
-                            fill: false,
-                            borderColor: [
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1,
-                            radius: 0,
+        $.ajax({
+            method: 'POST',
+            url: '/api/rate?period=' + period,
+        }).done(function(result) {
+            var chartUsd = new Chart(usdCtx,
+                {
+                    type: 'line',
+                    data: {
+                        labels: result.map(function(x) { return x.Timestamp; }),
+                        datasets: [
+                            {
+                                label: 'Usd Buy',
+                                data: result.map(function(x) { return x.UsdBuy; }),
+                                fill: false,
+                                borderColor: [
+                                    'rgba(153, 102, 255, 1)',
+                                ],
+                                borderWidth: 1,
+                                radius: 1,
 
+                            },
+                            {
+                                label: 'Usd Sell',
+                                data: result.map(function(x) { return x.UsdSell; }),
+                                fill: false,
+                                borderColor: [
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1,
+                                radius: 1,
+
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            yAxes: [
+                                {
+                                    display: true,
+                                    position: 'right'
+                                }
+                            ]
                         }
-                    ]
-                },
-                options: {
-                    responsive: false
-                }
-            });
+                    }
+                });
 
-        var chartEur = new Chart(eurCtx,
-            {
-                type: 'line',
-                data: {
-                    labels: result.map(function (x) { return x.Timestamp; }),
-                    datasets: [
-                        {
-                            label: 'Eur Buy',
-                            data: result.map(function (x) { return x.EurBuy; }),
-                            fill: false,
-                            borderColor: [
-                                'rgba(153, 102, 255, 1)',
-                            ],
-                            borderWidth: 1,
-                            radius: 0
-                        },
-                        {
-                            label: 'Eur Sell',
-                            data: result.map(function (x) { return x.EurSell; }),
-                            fill: false,
-                            borderColor: [
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1,
-                            radius: 0
+            var chartEur = new Chart(eurCtx,
+                {
+                    type: 'line',
+                    data: {
+                        labels: result.map(function(x) { return x.Timestamp; }),
+                        datasets: [
+                            {
+                                label: 'Eur Buy',
+                                data: result.map(function(x) { return x.EurBuy; }),
+                                fill: false,
+                                borderColor: [
+                                    'rgba(153, 102, 255, 1)',
+                                ],
+                                borderWidth: 1,
+                                radius: 1
+                            },
+                            {
+                                label: 'Eur Sell',
+                                data: result.map(function(x) { return x.EurSell; }),
+                                fill: false,
+                                borderColor: [
+                                    'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1,
+                                radius: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            yAxes: [
+                                {
+                                    display: true,
+                                    position: 'right'
+                                }
+                            ]
                         }
-                    ]
-                },
-                options: {
-                    responsive: false
-                }
-            });
-    });
+                    }
+                });
+        });
+    };
+
+    loadData($('#Period').val());
 </script>
 </body>
 </html>

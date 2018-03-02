@@ -16,13 +16,25 @@ namespace VkurseStats.Controllers
     {
         private const string Uri = "http://vkurse.dp.ua/course.json";
 
-        [HttpPost]
-        public JsonResult<List<VkurseRate>> GetGraph()
+        public JsonResult<List<VkurseRate>> Post(string period)
         {
             using (var db = new DataContext())
             {
-                var monthAgo = DateTime.UtcNow.AddMonths(-1);
-                var records = db.VkurseRates.Where(r => r.Timestamp > monthAgo).ToList();
+                var ago = DateTime.UtcNow.AddMonths(-1);
+                switch (period)
+                {
+                    case "day":
+                        ago = DateTime.UtcNow.AddDays(-1);
+                        break;
+                    case "week":
+                        ago = DateTime.UtcNow.AddDays(-7);
+                        break;
+                    case "month":
+                        ago = DateTime.UtcNow.AddMonths(-1);
+                        break;
+
+                }
+                var records = db.VkurseRates.Where(r => r.Timestamp > ago).ToList();
                 return Json(records);
             }
         }
