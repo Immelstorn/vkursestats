@@ -10,7 +10,7 @@
     <title>Graph</title>
 </head>
 <body>
-<div>
+<div id="dropdownDiv">
     @Html.DropDownList("Period",new List<System.Web.Mvc.SelectListItem> {
         new System.Web.Mvc.SelectListItem{Text = "Month", Value = "month", Selected = true},
         new System.Web.Mvc.SelectListItem{Text = "Week", Value = "week"},
@@ -18,14 +18,19 @@
     }, new {onchange="changePeriod();"})
 
 </div>
-<canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas>
-<canvas id="chartEur" style="width: 1500px; height: 300px"></canvas>
 <script>
+
     var changePeriod = function() {
         loadData($('#Period').val());
     };
 
-    var loadData = function(period) {
+    var loadData = function (period) {
+        $('#chartUsd').remove();
+        $('#chartEur').remove();
+
+        $('#dropdownDiv').append('<canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas><canvas id="chartEur" style="width: 1500px; height: 300px"></canvas>');
+
+
         var usdCtx = document.getElementById("chartUsd").getContext('2d');
         var eurCtx = document.getElementById("chartEur").getContext('2d');
 
@@ -116,14 +121,6 @@
                         }
                     }
                 });
-
-            $('#chartUsd').attr('style', 'width: 1500px; height: 300px');
-            $('#chartUsd').attr('width','');
-            $('#chartUsd').attr('height', '');
-
-            $('#chartEur').attr('style', 'width: 1500px; height: 300px');
-            $('#chartEur').attr('width','');
-            $('#chartEur').attr('height', '');
         });
     };
 
