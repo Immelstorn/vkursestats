@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VkurseStats.Models.DB
 {
@@ -15,5 +16,9 @@ namespace VkurseStats.Models.DB
         public double EurBuy { get; set; }
         public double EurSell { get; set; }
         public DateTime Timestamp { get; set; }
+        public double DkkRate { get; set; }
+
+        [NotMapped]
+        public double Salary => Math.Round(218.5 * DkkRate / UsdSell, 2);
     }
 }

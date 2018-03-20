@@ -135,9 +135,14 @@
     <Compile Include="Migrations\201802131354227_init.Designer.cs">
       <DependentUpon>201802131354227_init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803201048499_addDkk.cs" />
+    <Compile Include="Migrations\201803201048499_addDkk.Designer.cs">
+      <DependentUpon>201803201048499_addDkk.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DB\DataContext.cs" />
     <Compile Include="Models\DB\VkurseRate.cs" />
+    <Compile Include="Models\Nbu.cs" />
     <Compile Include="Models\ReturnDto.cs" />
     <Compile Include="Models\VkurseRateDto.cs" />
     <Compile Include="Models\RateDto.cs" />
@@ -176,6 +181,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201802131354227_init.resx">
       <DependentUpon>201802131354227_init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803201048499_addDkk.resx">
+      <DependentUpon>201803201048499_addDkk.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -15,6 +15,7 @@ namespace VkurseStats.Controllers
     public class RateController : ApiController
     {
         private const string Uri = "http://vkurse.dp.ua/course.json";
+        private const string UriNbu = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json&valcode=DKK";
 
         public JsonResult<List<VkurseRate>> Post(string period)
         {
@@ -72,21 +73,30 @@ namespace VkurseStats.Controllers
                     var response = client.Execute<VkurseDto>(request);
                     var content = response.Data;
 
-                    if (!double.TryParse(content.Dollar.Buy.Replace(',', '.'), out var usdbuy))
+                    if (!double.TryParse(content.Dollar.Buy.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var usdbuy))
                     {
                         usdbuy = lastToday.UsdBuy;
                     }
-                    if (!double.TryParse(content.Dollar.Sale.Replace(',', '.'), out var usdsell))
+                    if (!double.TryParse(content.Dollar.Sale.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var usdsell))
                     {
                         usdsell = lastToday.UsdSell;
                     }
-                    if (!double.TryParse(content.Euro.Buy.Replace(',', '.'), out var eurbuy))
+                    if (!double.TryParse(content.Euro.Buy.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var eurbuy))
                     {
                         eurbuy = lastToday.EurBuy;
                     }
-                    if (!double.TryParse(content.Euro.Sale.Replace(',', '.'), out var eursell))
+                    if (!double.TryParse(content.Euro.Sale.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var eursell))
                     {
                         eursell = lastToday.EurSell;
+                    }
+
+                    client = new RestClient(UriNbu);
+                    request = new RestRequest();
+                    var nburesponse = client.Execute<List<Nbu>>(request);
+
+                    if (!double.TryParse(nburesponse.Data.First().Rate.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var dkkRate))
+                    {
+                        usdbuy = lastToday.DkkRate;
                     }
 
                     var newRate = new VkurseRate {
@@ -94,6 +104,7 @@ namespace VkurseStats.Controllers
                         UsdSell = usdsell,
                         EurBuy = eurbuy,
                         EurSell = eursell,
+                        DkkRate = dkkRate
                     };
                     db.VkurseRates.Add(newRate);
                     db.SaveChanges();
@@ -113,6 +124,14 @@ namespace VkurseStats.Controllers
 
                         Sell = lastToday.UsdSell,
                         ChangePercentSell = Math.Round((lastToday.UsdSell / yesterdayValue.UsdSell - 1) * 100, 2),
+                    },
+                    Dkk = new RateDto {
+                        Buy = lastToday.DkkRate,
+                        ChangePercentBuy = Math.Round((lastToday.DkkRate / yesterdayValue.DkkRate - 1) * 100, 2),
+                    },
+                    Salary = new RateDto {
+                        Buy = lastToday.Salary,
+                        ChangePercentBuy = Math.Round((lastToday.Salary / yesterdayValue.Salary - 1) * 100, 2),
                     }
                 };
 

@@ -27,12 +27,16 @@
     var loadData = function (period) {
         $('#chartUsd').remove();
         $('#chartEur').remove();
+        $('#chartDkk').remove();
+        $('#chartSalary').remove();
 
-        $('#dropdownDiv').append('<canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas><canvas id="chartEur" style="width: 1500px; height: 300px"></canvas>');
+        $('#dropdownDiv').append('<canvas id="chartSalary" style="width: 1500px; height: 300px"></canvas><canvas id="chartUsd" style="width: 1500px; height: 300px"></canvas><canvas id="chartEur" style="width: 1500px; height: 300px"></canvas><canvas id="chartDkk" style="width: 1500px; height: 300px"></canvas>');
 
 
         var usdCtx = document.getElementById("chartUsd").getContext('2d');
         var eurCtx = document.getElementById("chartEur").getContext('2d');
+        var dkkCtx = document.getElementById("chartDkk").getContext('2d');
+        var salaryCtx = document.getElementById("chartSalary").getContext('2d');
 
         $.ajax({
             method: 'POST',
@@ -103,6 +107,68 @@
                                 fill: false,
                                 borderColor: [
                                     'rgba(255, 159, 64, 1)'
+                                ],
+                                borderWidth: 1,
+                                radius: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            yAxes: [
+                                {
+                                    display: true,
+                                    position: 'right'
+                                }
+                            ]
+                        }
+                    }
+                });
+
+            var chartDkk = new Chart(dkkCtx,
+                {
+                    type: 'line',
+                    data: {
+                            labels: result.map(function(x) { return x.Timestamp; }),
+                            datasets: [
+                                    {
+                                        label: 'Dkk',
+                                        data: result.map(function(x) { return x.DkkRate; }),
+                                        fill: false,
+                                        borderColor: [
+                                                'rgba(153, 102, 255, 1)',
+                                            ],
+                                        borderWidth: 1,
+                                        radius: 1
+                                    }
+                                ]
+                        },
+                    options: {
+                            responsive: false,
+                            scales: {
+                                    yAxes: [
+                                            {
+                                                display: true,
+                                                position: 'right'
+                                            }
+                                        ]
+                                }
+                        }
+                });
+
+            var chartSalary = new Chart(salaryCtx,
+                {
+                    type: 'line',
+                    data: {
+                        labels: result.map(function (x) { return x.Timestamp; }),
+                        datasets: [
+                            {
+                                label: 'Salary',
+                                data: result.map(function (x) { return x.Salary; }),
+                                fill: false,
+                                borderColor: [
+                                    'rgba(153, 102, 255, 1)',
                                 ],
                                 borderWidth: 1,
                                 radius: 1
