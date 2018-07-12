@@ -12,7 +12,8 @@
 <body>
 <div id="dropdownDiv">
     @Html.DropDownList("Period",new List<System.Web.Mvc.SelectListItem> {
-        new System.Web.Mvc.SelectListItem{Text = "Month", Value = "month", Selected = true},
+        new System.Web.Mvc.SelectListItem{Text = "All time", Value = "all", Selected = true},
+        new System.Web.Mvc.SelectListItem{Text = "Month", Value = "month"},
         new System.Web.Mvc.SelectListItem{Text = "Week", Value = "week"},
         new System.Web.Mvc.SelectListItem{Text = "Day", Value = "day"},
     }, new {onchange="changePeriod();"})

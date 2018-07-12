@@ -33,6 +33,9 @@ namespace VkurseStats.Controllers
                     case "month":
                         ago = DateTime.UtcNow.AddMonths(-1);
                         break;
+                    case "all":
+                        ago = DateTime.MinValue;
+                        break;
 
                 }
                 var records = db.VkurseRates.Where(r => r.Timestamp > ago).ToList();
