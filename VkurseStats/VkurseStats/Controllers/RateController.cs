@@ -38,7 +38,7 @@ namespace VkurseStats.Controllers
                         break;
 
                 }
-                var records = db.VkurseRates.Where(r => r.Timestamp > ago).ToList();
+                var records = db.VkurseRates.Where(r => r.Timestamp > ago && r.DkkRate > 0).ToList();
                 return Json(records);
             }
         }
