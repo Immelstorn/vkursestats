@@ -96,12 +96,13 @@ namespace VkurseStats.Controllers
                     client = new RestClient(UriNbu);
                     request = new RestRequest();
                     var nburesponse = client.Execute<List<Nbu>>(request);
+                    var dkkRate = lastToday.DkkRate;
 
-                    if (!double.TryParse(nburesponse.Data.First().Rate.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var dkkRate))
+                    if (nburesponse.Data.Any())
                     {
-                        usdbuy = lastToday.DkkRate;
+                        double.TryParse(nburesponse.Data.First().Rate.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out dkkRate);
                     }
-
+                    
                     var newRate = new VkurseRate {
                         UsdBuy = usdbuy,
                         UsdSell = usdsell,
