@@ -33,6 +33,12 @@ namespace VkurseStats.Controllers
                     case "month":
                         ago = DateTime.UtcNow.AddMonths(-1);
                         break;
+                    case "3month":
+                        ago = DateTime.UtcNow.AddMonths(-3);
+                        break;
+                    case "year":
+                        ago = DateTime.UtcNow.AddYears(-1);
+                        break;
                     case "all":
                         ago = DateTime.MinValue;
                         break;

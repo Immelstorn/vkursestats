@@ -13,6 +13,8 @@
 <div id="dropdownDiv">
     @Html.DropDownList("Period",new List<System.Web.Mvc.SelectListItem> {
         new System.Web.Mvc.SelectListItem{Text = "All time", Value = "all", Selected = true},
+        new System.Web.Mvc.SelectListItem{Text = "Year", Value = "year"},
+        new System.Web.Mvc.SelectListItem{Text = "Three Months", Value = "3month"},
         new System.Web.Mvc.SelectListItem{Text = "Month", Value = "month"},
         new System.Web.Mvc.SelectListItem{Text = "Week", Value = "week"},
         new System.Web.Mvc.SelectListItem{Text = "Day", Value = "day"},
