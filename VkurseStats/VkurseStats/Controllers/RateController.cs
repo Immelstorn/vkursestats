@@ -104,7 +104,7 @@ namespace VkurseStats.Controllers
                     var nburesponse = client.Execute<List<Nbu>>(request);
                     var dkkRate = lastToday.DkkRate;
 
-                    if (nburesponse.Data.Any())
+                    if (nburesponse?.Data != null && nburesponse.Data.Any())
                     {
                         double.TryParse(nburesponse.Data.First().Rate.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out dkkRate);
                     }
