@@ -19,6 +19,6 @@ namespace VkurseStats.Models.DB
         public double DkkRate { get; set; }
 
         [NotMapped]
-        public double Salary => Math.Round(225 * DkkRate / EurSell, 2);
+        public double Salary => Math.Round(235 * DkkRate / EurSell, 2);
     }
 }
